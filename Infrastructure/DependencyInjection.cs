@@ -1,4 +1,7 @@
+using Application.Common.Interfaces.Services;
+
 using Infrastructure.Constants;
+using Infrastructure.Services;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +16,8 @@ public static class DependencyInjection
     {
         services.Configure<AppSettings>(
             configuration.GetSection(SectionsNames.SettingsConfiguration));
+
+        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
         return services;
     }

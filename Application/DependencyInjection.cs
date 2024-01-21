@@ -1,3 +1,5 @@
+using Application.Common.Interfaces.Services;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;

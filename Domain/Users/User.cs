@@ -47,5 +47,4 @@ public sealed class User : AggregateRoot<UserId, Guid>
             DateTime.UtcNow,
             DateTime.UtcNow);
     }
-
 }
