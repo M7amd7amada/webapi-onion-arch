@@ -9,9 +9,9 @@ public static class Extensions
 {
     public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
     {
-        AppSettings? appSettings = builder.Configuration
-            .GetSection(SectionsNames.SettingsConfiguration).Get<AppSettings>();
-        CorsSettings? corsSettings = appSettings?.CorsSettings;
+        AppSettings appSettings = builder.Configuration
+            .GetSection(SectionsNames.SettingsConfiguration).Get<AppSettings>()!;
+        CorsSettings corsSettings = appSettings?.CorsSettings!;
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -24,38 +24,16 @@ public static class Extensions
             .AddApi()
             .AddInfrastructure(builder.Configuration);
 
-        ConfigureCors(builder, corsSettings);
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(corsSettings.PolicyName!, builder =>
+            {
+                builder.WithOrigins(corsSettings.Origins!)
+                       .WithHeaders(corsSettings.Headers!)
+                       .WithMethods(corsSettings.Methods!);
+            });
+        });
 
         return builder;
-    }
-
-    private static void ConfigureCors(WebApplicationBuilder builder, CorsSettings? corsSettings)
-    {
-        try
-        {
-            if (corsSettings is null)
-            {
-                throw new ArgumentNullException(nameof(corsSettings));
-            }
-
-            var policyName = corsSettings.PolicyName ?? throw new ArgumentNullException(nameof(corsSettings));
-            var origins = corsSettings.Origins ?? throw new ArgumentNullException(nameof(corsSettings));
-            var methods = corsSettings.Methods ?? throw new ArgumentNullException(nameof(corsSettings));
-            var headers = corsSettings.Headers ?? throw new ArgumentNullException(nameof(corsSettings));
-
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy(policyName, builder =>
-                {
-                    builder.WithOrigins(origins)
-                           .WithHeaders(headers)
-                           .WithMethods(methods);
-                });
-            });
-        }
-        catch
-        {
-
-        }
     }
 }
