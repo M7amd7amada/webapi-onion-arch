@@ -1,3 +1,7 @@
+using Application;
+
+using Domain;
+
 using Infrastructure.Constants;
 using Infrastructure.Settings;
 
@@ -22,6 +26,8 @@ public static class Extensions
 
         builder.Services
             .AddApi()
+            .AddDomain()
+            .AddApplication()
             .AddInfrastructure(builder.Configuration);
 
         builder.Services.AddCors(options =>
