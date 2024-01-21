@@ -1,6 +1,8 @@
 using Infrastructure.Constants;
 using Infrastructure.Settings;
 
+using Serilog;
+
 namespace Api.Extensions;
 
 public static class Extensions
@@ -15,11 +17,14 @@ public static class Extensions
         builder.Services.AddSwaggerGen();
         builder.Services.AddControllers();
 
-        ConfigureCors(builder, corsSettings);
+        builder.Host.UseSerilog((context, loggerConfig) =>
+            loggerConfig.ReadFrom.Configuration(context.Configuration));
 
         builder.Services
             .AddApi()
             .AddInfrastructure(builder.Configuration);
+
+        ConfigureCors(builder, corsSettings);
 
         return builder;
     }
